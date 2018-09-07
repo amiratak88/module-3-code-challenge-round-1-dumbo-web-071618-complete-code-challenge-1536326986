@@ -16,13 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
       imgName.innerText = image.name
       likes.innerText = image.like_count
       image.comments.forEach(com => {
-        const li = document.createElement('li')
-        li.innerText = com.content
-        const btn = document.createElement('button')
-        btn.innerText = "x"
-        btn.dataset.id = com.id
-        li.appendChild(btn)
-        imgCommentsList.appendChild(li)
+        let li = new Comment(com)
+        imgCommentsList.appendChild(li.render())
       })
     })
 
@@ -30,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
   likeButton.addEventListener("click", e => {
     /////Fron-end///////
     imgLikes.innerText = parseInt(imgLikes.innerText) + 1
-
     //////Back-end////////
     ImageAdapter.likeImage()
   })
@@ -38,18 +32,15 @@ document.addEventListener('DOMContentLoaded', function() {
   commentForm.addEventListener("submit", e => {
     e.preventDefault()
     ////Front-end///////
-    const li = document.createElement('li')
-    li.innerText = commentInput.value
-    const btn = document.createElement('button')
-    btn.innerText = "x"
+   let li = new Comment({
+     id: parseInt(imgCommentsList.children[imgCommentsList.children.length - 1].querySelector('button').getAttribute('data-id')) + 1,
+     content: commentInput.value
+   })
+    imgCommentsList.appendChild(li.render())
 
     /////Back-end//////
     ImageAdapter.addComment(commentInput.value)
-      .then(com => btn.dataset.id = com.id)
-    ////Front-end continued/////
     commentInput.value = ''
-    li.appendChild(btn)
-    imgCommentsList.appendChild(li)
   })
 
   imgCommentsList.addEventListener("click", e => {
